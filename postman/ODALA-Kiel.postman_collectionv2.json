@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "b382e7e2-4097-413c-8dad-0daa95ed4493",
+		"name": "ODALA-Kiel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://accounts.staging.odala.kiel.de/oauth2/token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password-clientsecret}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{username-clientid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://accounts.staging.odala.kiel.de/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"accounts",
+						"staging",
+						"odala",
+						"kiel",
+						"de"
+					],
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://scorpio.staging.odala.kiel.de/ngsi-ld/v1/entities/",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{bearertoken}}",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://scorpio.staging.odala.kiel.de/ngsi-ld/v1/entities?type=https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23TrafficFlowObserved",
+					"protocol": "https",
+					"host": [
+						"scorpio",
+						"staging",
+						"odala",
+						"kiel",
+						"de"
+					],
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23TrafficFlowObserved"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "username",
+			"value": "user.email@company.fi",
+			"type": "default"
+		},
+		{
+			"key": "password",
+			"value": "passwordgoeshere",
+			"type": "default"
+		},
+		{
+			"key": "bearertoken",
+			"value": "putbearertokenhere",
+			"type": "default"
+		},
+		{
+			"key": "username-clientid",
+			"value": "939f0a29-0940-4eb3-b58b-6e371f276c01",
+			"type": "default"
+		},
+		{
+			"key": "password-clientsecret",
+			"value": "tttttttt-hhhh-bbbb-yyyy-xxxxxx",
+			"type": "default"
+		}
+	]
+}

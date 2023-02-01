@@ -1,0 +1,2495 @@
+{
+	"info": {
+		"_postman_id": "0f9c2e14-e60d-4c8b-90e1-74c52bec2d4c",
+		"name": "ODALA-Kiel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "IDM",
+			"item": [
+				{
+					"name": "Get user access token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"user-access-token\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{client_secret}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{client_id}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{idm_url}}/oauth2/token",
+							"host": [
+								"{{idm_url}}"
+							],
+							"path": [
+								"oauth2",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scorpio",
+			"item": [
+				{
+					"name": "AirQuality",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": "https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add name and location",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:AirQualityObserved:HOPac67b2cd4516\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1024033252149,\n                    54.3282081950327\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN2\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    },\n    {\n        \"id\": \"urn:ngsi-ld:AirQualityObserved:HOPac67b2ce4e9a\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1022657195715,\n                    54.3279312182754\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN1\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    },\n    {\n        \"id\": \"urn:ngsi-ld:AirQualityObserved:HOPac67b2d5cb1e\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1022657195715,\n                    54.3279312182754\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN3\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:AirQualityObserved:HOPac67b2cd45d6\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create subscription with link header",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": "https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"type\": \"Subscription\",\r\n    \"entities\": [\r\n        {\r\n            \"idPattern\": \"urn:ngsi-ld:AirQualityObserved:.*\",\r\n            \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\"\r\n        }\r\n    ],\r\n    \"notification\": {\r\n        \"attributes\": [\r\n            \"CO\",\r\n            \"NO2\",\r\n            \"O3\",\r\n            \"SO2\",\r\n            \"PM1\",\r\n            \"PM25\",\r\n            \"PM10\"\r\n        ],\r\n        \"format\": \"keyValues\",\r\n        \"endpoint\": {\r\n            \"uri\": \"http://quantumleap-quantumleap.odala-staging.svc.cluster.local:8668/v2/notify\",\r\n            \"accept\": \"application/json\"\r\n        }\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/subscriptions",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"subscriptions"
+									]
+								},
+								"description": "create subscription with context in payload"
+							},
+							"response": []
+						},
+						{
+							"name": "Query all subscriptions Copy",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": "https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/subscriptions/",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"subscriptions",
+										""
+									]
+								},
+								"description": "for retreiving specific subscription"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete subscription",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": "https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/subscriptions/urn:ngsi-ld:Subscription:1679088931",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"subscriptions",
+										"urn:ngsi-ld:Subscription:1679088931"
+									]
+								},
+								"description": "for retreiving specific subscription"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23AirQualityObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "ws",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:WeatherObserved:HOPac67b2cd4516\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#WeatherObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1024033252149,\n                    54.3282081950327\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN2\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    },\n    {\n        \"id\": \"urn:ngsi-ld:WeatherObserved:HOPac67b2ce4e9a\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#WeatherObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1022657195715,\n                    54.3279312182754\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN1\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:AirQualityObserved:HOPac67b2cd45d6\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23WeatherObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "noise",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:NoiseLevelObserved:HOPac67b2cd4516\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#NoiseLevelObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1024033252149,\n                    54.3282081950327\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN2\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    },\n    {\n        \"id\": \"urn:ngsi-ld:NoiseLevelObserved:HOPac67b2ce4e9a\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#NoiseLevelObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1022657195715,\n                    54.3279312182754\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN1\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:AirQualityObserved:HOPac67b2cd45d6\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23NoiseLevelObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "crowd",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:CrowdFlowObserved:HOPac67b2cd4516\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#CrowdFlowObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1024033252149,\n                    54.3282081950327\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN2\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    },\n    {\n        \"id\": \"urn:ngsi-ld:CrowdFlowObserved:HOPac67b2ce4e9a\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#CrowdFlowObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    10.1022657195715,\n                    54.3279312182754\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"WSAQN1\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"NOT_CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:AirQualityObserved:HOPac67b2cd45d6\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23CrowdFlowObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.sendRequest({",
+							"    url: pm.collectionVariables.get(\"idm_url\") + '/oauth2/token',",
+							"    method: 'POST',",
+							"    auth: {",
+							"        type: \"basic\",",
+							"        basic: [",
+							"            { key: \"username\", value: pm.collectionVariables.get(\"client_id\")},",
+							"            { key: \"password\", value: pm.collectionVariables.get(\"client_secret\")}",
+							"        ]",
+							"    },    ",
+							"    headers: {",
+							"        'Content-Type': 'application/x-www-form-urlencoded'",
+							"    },",
+							"    body: {",
+							"        mode: 'urlencoded',",
+							"        urlencoded: [",
+							"            { key: \"username\", value: pm.collectionVariables.get(\"username\"), disabled: false },",
+							"            { key: \"password\", value: pm.collectionVariables.get(\"password\"), disabled: false },",
+							"            { key: \"grant_type\", value: \"password\", disabled: false }",
+							"        ]",
+							"    }",
+							"}, function (err, response) {",
+							"    var jsonData = response.json();",
+							"    pm.collectionVariables.set(\"user-access-token\", jsonData.access_token);",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "scorpio-local",
+			"item": [
+				{
+					"name": "AirQuality",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context;rel=http://www.w3.org/ns/json-ld#context;type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:9090/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"localhost"
+									],
+									"port": "9090",
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"co\": {\n            \"value\": 557.2999877,\n            \"type\": \"Property\"\n        },\n        \"H2S\": {\n            \"value\": 6.222001,\n            \"type\": \"Property\"\n        },\n        \"NO\": {\n            \"value\": 0,\n            \"type\": \"Property\"\n        },\n        \"NO2\": {\n            \"value\": 67.5699996,\n            \"type\": \"Property\"\n        },\n        \"O3\": {\n            \"value\": 9.2700004,\n            \"type\": \"Property\"\n        },\n        \"PM1\": {\n            \"value\": 11.5716304,\n            \"type\": \"Property\"\n        },\n        \"PM10\": {\n            \"value\": 34.0724067,\n            \"type\": \"Property\"\n        },\n        \"PM25\": {\n            \"value\": 17.5279903,\n            \"type\": \"Property\"\n        },\n        \"SO2\": {\n            \"value\": 7.4699997,\n            \"type\": \"Property\"\n        },\n        \"TimeInstant\": {\n            \"value\": \"2022-01-17T11:05:05.00Z\",\n            \"type\": \"Property\"\n        },\n        \"VOC\": {\n            \"value\": 533.5060424,\n            \"type\": \"Property\"\n        },\n        \"dataProvider\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        },\n        \"humidity\": {\n            \"value\": 49.9763488,\n            \"type\": \"Property\"\n        },\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    -1.2153559,\n                    37.9688796\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"Plaza de la Constitución\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"particulates\": {\n            \"value\": [\n                \"PM1\",\n                \"PM10\",\n                \"PM25\"\n            ],\n            \"type\": \"Property\"\n        },\n        \"pollutants\": {\n            \"value\": [\n                \"CO\",\n                \"H2S\",\n                \"NO\",\n                \"NO2\",\n                \"O3\",\n                \"SO2\",\n                \"VOC\"\n            ],\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        },\n        \"temperature\": {\n            \"value\": 11.4614324,\n            \"type\": \"Property\"\n        },\n        \"dateModified\": {\n            \"value\": \"2022-01-17T11:06:18.00Z\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:HOPU:TEST-001\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23AirQualityObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "ws",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:9090/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"localhost"
+									],
+									"port": "9090",
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"co\": {\n            \"value\": 557.2999877,\n            \"type\": \"Property\"\n        },\n        \"H2S\": {\n            \"value\": 6.222001,\n            \"type\": \"Property\"\n        },\n        \"NO\": {\n            \"value\": 0,\n            \"type\": \"Property\"\n        },\n        \"NO2\": {\n            \"value\": 67.5699996,\n            \"type\": \"Property\"\n        },\n        \"O3\": {\n            \"value\": 9.2700004,\n            \"type\": \"Property\"\n        },\n        \"PM1\": {\n            \"value\": 11.5716304,\n            \"type\": \"Property\"\n        },\n        \"PM10\": {\n            \"value\": 34.0724067,\n            \"type\": \"Property\"\n        },\n        \"PM25\": {\n            \"value\": 17.5279903,\n            \"type\": \"Property\"\n        },\n        \"SO2\": {\n            \"value\": 7.4699997,\n            \"type\": \"Property\"\n        },\n        \"TimeInstant\": {\n            \"value\": \"2022-01-17T11:05:05.00Z\",\n            \"type\": \"Property\"\n        },\n        \"VOC\": {\n            \"value\": 533.5060424,\n            \"type\": \"Property\"\n        },\n        \"dataProvider\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        },\n        \"humidity\": {\n            \"value\": 49.9763488,\n            \"type\": \"Property\"\n        },\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    -1.2153559,\n                    37.9688796\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"Plaza de la Constitución\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"particulates\": {\n            \"value\": [\n                \"PM1\",\n                \"PM10\",\n                \"PM25\"\n            ],\n            \"type\": \"Property\"\n        },\n        \"pollutants\": {\n            \"value\": [\n                \"CO\",\n                \"H2S\",\n                \"NO\",\n                \"NO2\",\n                \"O3\",\n                \"SO2\",\n                \"VOC\"\n            ],\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        },\n        \"temperature\": {\n            \"value\": 11.4614324,\n            \"type\": \"Property\"\n        },\n        \"dateModified\": {\n            \"value\": \"2022-01-17T11:06:18.00Z\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:HOPU:TEST-001\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23WeatherObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "noise",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:9090/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"localhost"
+									],
+									"port": "9090",
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									},
+									{
+										"key": "Link",
+										"value": " https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"co\": {\n            \"value\": 557.2999877,\n            \"type\": \"Property\"\n        },\n        \"H2S\": {\n            \"value\": 6.222001,\n            \"type\": \"Property\"\n        },\n        \"NO\": {\n            \"value\": 0,\n            \"type\": \"Property\"\n        },\n        \"NO2\": {\n            \"value\": 67.5699996,\n            \"type\": \"Property\"\n        },\n        \"O3\": {\n            \"value\": 9.2700004,\n            \"type\": \"Property\"\n        },\n        \"PM1\": {\n            \"value\": 11.5716304,\n            \"type\": \"Property\"\n        },\n        \"PM10\": {\n            \"value\": 34.0724067,\n            \"type\": \"Property\"\n        },\n        \"PM25\": {\n            \"value\": 17.5279903,\n            \"type\": \"Property\"\n        },\n        \"SO2\": {\n            \"value\": 7.4699997,\n            \"type\": \"Property\"\n        },\n        \"TimeInstant\": {\n            \"value\": \"2022-01-17T11:05:05.00Z\",\n            \"type\": \"Property\"\n        },\n        \"VOC\": {\n            \"value\": 533.5060424,\n            \"type\": \"Property\"\n        },\n        \"dataProvider\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        },\n        \"humidity\": {\n            \"value\": 49.9763488,\n            \"type\": \"Property\"\n        },\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    -1.2153559,\n                    37.9688796\n                ]\n            }\n        },\n        \"name\": {\n            \"value\": \"Plaza de la Constitución\",\n            \"type\": \"Property\"\n        },\n        \"operationalStatus\": {\n            \"value\": \"CONNECTED\",\n            \"type\": \"Property\"\n        },\n        \"particulates\": {\n            \"value\": [\n                \"PM1\",\n                \"PM10\",\n                \"PM25\"\n            ],\n            \"type\": \"Property\"\n        },\n        \"pollutants\": {\n            \"value\": [\n                \"CO\",\n                \"H2S\",\n                \"NO\",\n                \"NO2\",\n                \"O3\",\n                \"SO2\",\n                \"VOC\"\n            ],\n            \"type\": \"Property\"\n        },\n        \"source\": {\n            \"value\": \"www.hopu.eu\",\n            \"type\": \"Property\"\n        },\n        \"temperature\": {\n            \"value\": 11.4614324,\n            \"type\": \"Property\"\n        },\n        \"dateModified\": {\n            \"value\": \"2022-01-17T11:06:18.00Z\",\n            \"type\": \"Property\"\n        }\n    }\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-admin-access",
+										"value": "allow",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:HOPU:TEST-001\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.collectionVariables.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23NoiseLevelObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "TrafficFlow",
+					"item": [
+						{
+							"name": "Retrieve entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities?type={{fiware-type}}",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{fiware-type}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n    \"location\": {\n        \"type\": \"GeoProperty\",\n        \"value\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n                46.030421105982136,\n                7.274186442346502\n            ]\n        }\n    },\n    \"https://uri.fiware.org/ns/data-models#humidity\": {\n        \"type\": \"Property\",\n        \"value\": 25.45487144274052,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"https://uri.fiware.org/ns/data-models#temperature\": {\n        \"type\": \"Property\",\n        \"value\": 50.30952925917448,\n        \"observedAt\": \"2021-06-08T10:02:21Z\"\n    },\n    \"@context\": [\n        \"https://schema.lab.fiware.org/ld/context\",\n        \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entity",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entities/urn:ngsi-ld:HOPU:TEST-001",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entities",
+										"urn:ngsi-ld:HOPU:TEST-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upsert entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/ld+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    {\n        \"id\": \"urn:ngsi-ld:HOPU:TEST-001\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    46.030421105982136,\n                    7.274186442346502\n                ]\n            }\n        },\n        \"https://uri.fiware.org/ns/data-models#humidity\": {\n            \"type\": \"Property\",\n            \"value\": 25.45487144274052,\n            \"observedAt\": \"2021-06-08T10:02:21Z\"\n        },\n        \"https://uri.fiware.org/ns/data-models#temperature\": {\n            \"type\": \"Property\",\n            \"value\": 50.30952925917448,\n            \"observedAt\": \"2021-06-08T10:02:21Z\"\n        },\n        \"@context\": [\n            \"https://schema.lab.fiware.org/ld/context\",\n            \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n        ]\n    },\n    {\n        \"id\": \"urn:ngsi-ld:HOPU:TEST-002\",\n        \"type\": \"https://uri.fiware.org/ns/data-models#AirQualityObserved\",\n        \"location\": {\n            \"type\": \"GeoProperty\",\n            \"value\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    46.030421105982136,\n                    7.274186442346502\n                ]\n            }\n        },\n        \"https://uri.fiware.org/ns/data-models#humidity\": {\n            \"type\": \"Property\",\n            \"value\": 25.45487144274052,\n            \"observedAt\": \"2021-06-08T10:02:21Z\"\n        },\n        \"https://uri.fiware.org/ns/data-models#temperature\": {\n            \"type\": \"Property\",\n            \"value\": 50.30952925917448,\n            \"observedAt\": \"2021-06-08T10:02:21Z\"\n        },\n        \"@context\": [\n            \"https://schema.lab.fiware.org/ld/context\",\n            \"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld\"\n        ]\n    }    \n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/upsert?options=update",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"upsert"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "update"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete entities",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{user-access-token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"urn:ngsi-ld:HOPU:TEST-001\",\n    \"urn:ngsi-ld:HOPU:TEST-002\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{scorpio_url}}/ngsi-ld/v1/entityOperations/delete",
+									"host": [
+										"{{scorpio_url}}"
+									],
+									"path": [
+										"ngsi-ld",
+										"v1",
+										"entityOperations",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"fiware-type\", \"https%3A%2F%2Furi.fiware.org%2Fns%2Fdata-models%23TrafficFlowObserved\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Temporal",
+			"item": [
+				{
+					"name": "Retrieve entities Temporal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-admin-access",
+								"value": "allow",
+								"type": "text"
+							},
+							{
+								"key": "Link",
+								"value": "https://schema.lab.fiware.org/ld/context; rel=http://www.w3.org/ns/json-ld#context; type=application/ld+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{scorpio_url}}/ngsi-ld/v1/entities?type={{fiware-type}}",
+							"host": [
+								"{{scorpio_url}}"
+							],
+							"path": [
+								"ngsi-ld",
+								"v1",
+								"entities"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "{{fiware-type}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "username",
+			"value": "user.email@company.fi"
+		},
+		{
+			"key": "password",
+			"value": "passwordgoeshere"
+		},
+		{
+			"key": "user-access-token",
+			"value": "putbearertokenhere"
+		},
+		{
+			"key": "client_id",
+			"value": "939f0a29-0940-4eb3-b58b-6e371f276c01"
+		},
+		{
+			"key": "client_secret",
+			"value": "tttttttt-hhhh-bbbb-yyyy-xxxxxx"
+		},
+		{
+			"key": "idm_url",
+			"value": "https://accounts.staging.odala.kiel.de"
+		},
+		{
+			"key": "scorpio_url",
+			"value": "https://scorpio.staging.odala.kiel.de"
+		},
+		{
+			"key": "fiware-type",
+			"value": ""
+		}
+	]
+}
