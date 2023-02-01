@@ -30,7 +30,7 @@ Primarily, each of the components have their own documentation, with the excepti
 
 ### Feedback.
 
-You may open an Issue for the [Issue project](https://gitlab.publiccode.solutions/odala-public/issues), if you notice mistakes or want to contribute in any manner.
+You may open an Issue for the [Issue project](https://gitlab.publiccode.solutions/odala-public/issues), if you notice mistakes or want to contribute in any manner. Please note that you need an account to create issues.
 
 ### About ODALA project
 
