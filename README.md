@@ -4,7 +4,9 @@
 
 Here is the overall architecture for the ODALA with the usecases and work done by follower cities combined:
 
-![](architecture-2023-08.png)
+![](img/architecture-2023-08.png)
+
+In the heart of the solution is Scorpio contect broker. All major data flows through it.
 
 ODALA architecture has been evolving during the project duration and we have two major iterations. First one was deployed to front runner city Kiel during 1st half of 2022. Here is the architecture for that deployment:
 
